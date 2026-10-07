@@ -1,0 +1,50 @@
+server:
+  servlet:
+    context-path: /api
+
+jwt:
+  access-token:
+    expiry: 3600
+    secret-key: '*&t8&TBD98OTN#*O7DTO7*#TB87#TBS*Q&TQ#D(S*B@O*&D(&@^F#'
+
+  refresh-token:
+    expiry: 86400
+    secret-key: '*&t8&TBD98OTN#*O7DTO7*#TB8D#&D@#^B&D#@^(7#TBS*Q&TQ#D(S*B@O*&D(&@^F#'
+
+spring:
+  application:
+    name: famous-books-app
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/famous_books
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: <ID>
+            client-secret: <SECRET>
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: farkhod.go@gmail.com
+    password: <PSWD>
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+
+file:
+  base-path: uploads/
