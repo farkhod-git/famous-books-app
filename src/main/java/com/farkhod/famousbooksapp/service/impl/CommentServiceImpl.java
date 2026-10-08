@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -76,7 +75,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteComment(Long postId, Long commentId) {
         postService.getPostById(postId);
-        Comment comment = commentRepository.findByIdAndCreatedBy_Id(commentId, CurrentUserUtil.currentUser().getId())
+        Comment comment = commentRepository.findByIdAndCreatedBy_IdAndDeletedFalse(commentId, CurrentUserUtil.currentUser().getId())
                 .orElseThrow(() -> new MyNotFoundException("Comment not found"));
 
         comment.setFile(null);
@@ -87,7 +86,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private Comment getById(Long id) {
-        return commentRepository.findById(id)
+        return commentRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new MyNotFoundException("Comment not found"));
     }
 }

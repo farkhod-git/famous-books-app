@@ -41,5 +41,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
                      inner join users u on u.id = c.created_by_id""", nativeQuery = true)
     List<CommentProjection> findAllTreeCommentsByPostId(Long postId, int size, Long commentId);
 
-    Optional<Comment> findByIdAndCreatedBy_Id(Long commentId, UUID id);
+    Optional<Comment> findByIdAndCreatedBy_IdAndDeletedFalse(Long commentId, UUID id);
+
+    Optional<Comment> findByIdAndDeletedFalse(Long commentId);
 }
