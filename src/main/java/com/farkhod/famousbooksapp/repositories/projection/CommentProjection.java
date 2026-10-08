@@ -23,4 +23,6 @@ public interface CommentProjection {
     String getCreatedByLastname();
 
     UUID getCreatedByAvatarId();
+
+    boolean isDeleted();
 }

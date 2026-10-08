@@ -73,15 +73,17 @@ public class CommentServiceImpl implements CommentService {
         return ApiResponseDto.success(commentMapper.toDto(comment));
     }
 
-    @Transactional
     @Override
     public void deleteComment(Long postId, Long commentId) {
         postService.getPostById(postId);
         Comment comment = commentRepository.findByIdAndCreatedBy_Id(commentId, CurrentUserUtil.currentUser().getId())
                 .orElseThrow(() -> new MyNotFoundException("Comment not found"));
 
-        commentRepository.delete(comment);
-        postService.decrementComments(postId);
+        comment.setFile(null);
+        comment.setContent(null);
+        comment.setDeleted(true);
+
+        commentRepository.save(comment);
     }
 
     private Comment getById(Long id) {

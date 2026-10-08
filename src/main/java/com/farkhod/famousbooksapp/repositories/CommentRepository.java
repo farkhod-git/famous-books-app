@@ -17,15 +17,17 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
                                              where post_id = :postId
                                                and reply_comment_id is null
                                                and id <= :commentId
-                                             order by id
-                                             limit :size)
+                                               and deleted = false
+                                               order by id
+                                               limit :size)
             
                                             UNION ALL
             
                                             select c.*
                                             from comments c
                                                      inner join comment_tree t
-                                                                on t.id = c.reply_comment_id)
+                                                                on t.id = c.reply_comment_id
+                                            where c.deleted = false)
             select c.id               as id,
                    c.file_id          as fileId,
                    c.reply_comment_id as replyCommentId,
@@ -35,7 +37,8 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
                    u.id               as createdById,
                    u.firstname        as createdByFirstname,
                    u.lastname         as createdByLastname,
-                   u.avatar_id        as createdByAvatarId
+                   u.avatar_id        as createdByAvatarId,
+                   c.deleted          as deleted
             from comment_tree c
                      inner join users u on u.id = c.created_by_id""", nativeQuery = true)
     List<CommentProjection> findAllTreeCommentsByPostId(Long postId, int size, Long commentId);

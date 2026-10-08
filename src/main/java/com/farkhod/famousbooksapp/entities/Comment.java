@@ -43,4 +43,6 @@ public class Comment {
     @CreatedBy
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     User createdBy;
+
+    boolean deleted;
 }

@@ -33,4 +33,5 @@ public class CommentDto {
     @JsonFormat(pattern = AppConstants.DATE_TIME_FORMAT)
     LocalDateTime updatedAt;
     ProfileDto createdBy;
+    boolean deleted;
 }
