@@ -27,14 +27,14 @@ spring:
       client:
         registration:
           google:
-            client-id: <ID>
-            client-secret: <SECRET>
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
 
   mail:
     host: smtp.gmail.com
     port: 587
-    username: farkhod.go@gmail.com
-    password: <PSWD>
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -47,4 +47,4 @@ spring:
           writetimeout: 5000
 
 file:
-  base-path: uploads/
+  base-path: /

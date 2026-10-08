@@ -71,7 +71,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(attachment.getContentType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, cd.toString())
-                .body(new FileSystemResource(attachment.getPath()));
+                .body(new FileSystemResource(fileBasePath + attachment.getPath()));
     }
 
     @Override
@@ -105,7 +105,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     private Path saveFile(InputStream is, String extension) {
         LocalDate today = LocalDate.now();
 
-        Path path = Path.of(fileBasePath)
+        Path path = Path.of("/uploads")
                 .resolve(today.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")))
                 .resolve(UUID.randomUUID() + "." + extension);
 
