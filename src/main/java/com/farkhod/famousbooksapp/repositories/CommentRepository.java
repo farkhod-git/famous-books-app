@@ -17,7 +17,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
                                              where post_id = :postId
                                                and reply_comment_id is null
                                                and id <= :commentId
-                                               and deleted = false
                                                order by id
                                                limit :size)
             
@@ -26,8 +25,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
                                             select c.*
                                             from comments c
                                                      inner join comment_tree t
-                                                                on t.id = c.reply_comment_id
-                                            where c.deleted = false)
+                                                                on t.id = c.reply_comment_id)
             select c.id               as id,
                    c.file_id          as fileId,
                    c.reply_comment_id as replyCommentId,
