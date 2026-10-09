@@ -47,4 +47,4 @@ spring:
           writetimeout: 5000
 
 file:
-  base-path: /
+  base-path: /Users/farkhod/IdeaProjects/famous-books-app/

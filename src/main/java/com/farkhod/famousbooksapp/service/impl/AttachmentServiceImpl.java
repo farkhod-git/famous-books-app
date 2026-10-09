@@ -105,7 +105,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     private Path saveFile(InputStream is, String extension) {
         LocalDate today = LocalDate.now();
 
-        Path path = Path.of("/uploads")
+        Path path = Path.of("uploads")
                 .resolve(today.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")))
                 .resolve(UUID.randomUUID() + "." + extension);
 
@@ -118,7 +118,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             throw new RuntimeException(e);
         }
 
-        return path;
+        return Path.of("/").resolve(path);
     }
 
     public Attachment getById(UUID id) {
