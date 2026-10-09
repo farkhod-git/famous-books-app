@@ -109,9 +109,11 @@ public class AttachmentServiceImpl implements AttachmentService {
                 .resolve(today.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")))
                 .resolve(UUID.randomUUID() + "." + extension);
 
+        Path full = Path.of(fileBasePath).resolve(path);
+
         try {
-            Files.createDirectories(path.getParent());
-            Files.copy(is, path, StandardCopyOption.REPLACE_EXISTING);
+            Files.createDirectories(full.getParent());
+            Files.copy(is, full, StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
