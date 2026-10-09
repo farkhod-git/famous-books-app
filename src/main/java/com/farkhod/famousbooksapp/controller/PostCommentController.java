@@ -1,6 +1,5 @@
 package com.farkhod.famousbooksapp.controller;
 
-import com.farkhod.famousbooksapp.enums.ScrollDirectionEnum;
 import com.farkhod.famousbooksapp.payload.ApiResponseDto;
 import com.farkhod.famousbooksapp.payload.comments.CommentDto;
 import com.farkhod.famousbooksapp.payload.comments.CreateCommentDto;

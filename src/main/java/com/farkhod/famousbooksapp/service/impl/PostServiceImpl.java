@@ -53,9 +53,11 @@ public class PostServiceImpl implements PostService {
 
         UUID userId = CurrentUserUtil.currentUser().getId();
 
-        Page<PostDto> postPage = query == null ?
-                postRepository.findAllPosts(userId, pageRequest)
-                : postRepository.findAllPostsByQuery(userId, query, pageRequest);
+        Page<PostDto> postPage = switch (postSearchDto.getSearchType()) {
+            case NEW -> postRepository.findNewPostsByQuery(userId, query, pageRequest);
+            case LIKED -> postRepository.findLikedPostsByQuery(userId, query, pageRequest);
+            default -> postRepository.findFamousPostsByQuery(userId, query, pageRequest);
+        };
 
         PagedModel<PostDto> data = new PagedModel<>(postPage);
 
