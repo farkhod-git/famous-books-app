@@ -53,7 +53,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                 left join PostLike l on l.id.postId = p.id and l.id.userId = :userId
                 left join PostView v on v.id.postId = p.id and v.id.userId = :userId
             where p.active = true
-            and (:query is null or FUNCTION('ts_match_vq', p.searchVector, cast(:query as string)) = true)""",
+            and (:query is null or FUNCTION('ts_match_vq', p.searchVector, cast(:query as string)) = true)
+            and (l.id.postId is not null)""",
             countQuery = POST_SEARCH_COUNT_QUERY)
     Page<PostDto> findLikedPostsByQuery(UUID userId, String query, Pageable pageable);
 
