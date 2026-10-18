@@ -146,7 +146,7 @@ public class PostServiceImpl implements PostService {
 
         postMapper.update(updatePostDto, post);
 
-        if (updatePostDto.coverId() != null && Objects.equals(post.getCover().getId(), updatePostDto.coverId())) {
+        if (updatePostDto.coverId() != null && !Objects.equals(post.getCover().getId(), updatePostDto.coverId())) {
             Attachment attachment = attachmentService.getById(updatePostDto.coverId());
             if (attachment == null) {
                 throw new MyNotFoundException("Attachment not found");
