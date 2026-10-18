@@ -15,6 +15,7 @@ spring:
   application:
     name: famous-books-app
 
+
   # IDE yoki `mvn spring-boot:run` uchun .env'ni o'qiydi!
   # Docker'da o'zgaruvchilar muhitdan keladi va ustun turadi.
   config:
@@ -46,3 +47,8 @@ spring:
           connectiontimeout: 5000
           timeout: 3000
           writetimeout: 5000
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
