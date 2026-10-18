@@ -15,7 +15,9 @@ services:
       POSTGRES_HOST: famous-books-postgres
       REDIS_HOST: famous-books-redis
     volumes:
-      - uploads:/opt/famousbooks
+      # Bind mount: konteyner host'dagi papkaning o'ziga yozadi.
+      # Serverda: /opt/famousbooks/uploads, lokalda: loyihadagi uploads/
+      - ./uploads:/opt/famousbooks/uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -62,4 +64,3 @@ services:
 volumes:
   postgres-data:
   redis-data:
-  uploads:

@@ -36,3 +36,4 @@ build/
 # Secretlar
 client_id_secret.json
 .DS_Store
+uploads/
