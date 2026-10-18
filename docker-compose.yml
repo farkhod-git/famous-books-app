@@ -1,0 +1,65 @@
+services:
+  app:
+    build: .
+    # Bo'lmasa Compose nomni o'zi to'qiydi: <papka nomi>-<servis nomi>.
+    # Registry nomi bo'lishi shart: server shu nom bilan pull qiladi.
+    # APP_TAG — CI aniq commit'ni deploy qiladi; lokalda latest.
+    image: ghcr.io/farkhod-git/famous-books-app:${APP_TAG:-latest}
+    container_name: famous-books-app
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      # Konteynerlar bir-birini service nomi bilan topadi
+      POSTGRES_HOST: famous-books-postgres
+      REDIS_HOST: famous-books-redis
+    volumes:
+      - uploads:/opt/famousbooks
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres:
+    # Versiya qat'iy belgilangan: data papkasi major versiyaga bog'liq
+    image: postgres:18
+    container_name: famous-books-postgres
+    # Faqat kerakli o'zgaruvchilar — butun .env emas
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      # $$ — Compose emas, konteyner ichidagi shell o'qiydi
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:8
+    container_name: famous-books-redis
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+# DB'ga tashqi klient (DataGrip, psql) bilan ulanmoqchi bo'lsangiz,
+# postgres servisiga quyidagini qo'shing (hostdagi 5432 band bo'lsa 5433):
+#   ports:
+#     - "5433:5432"
+
+volumes:
+  postgres-data:
+  redis-data:
+  uploads:

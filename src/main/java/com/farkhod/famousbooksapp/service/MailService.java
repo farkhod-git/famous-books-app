@@ -1,5 +1,5 @@
 package com.farkhod.famousbooksapp.service;
 
-public interface ConfirmationService {
+public interface MailService {
     void sendConfirmation(String to, String confirmation);
 }

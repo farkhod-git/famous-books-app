@@ -1,0 +1,10 @@
+# Build kontekstiga kerak bo'lmagan narsalar
+.git
+.idea
+target
+uploads
+.DS_Store
+
+# Secretlar — image ichiga hech qachon tushmasligi kerak
+.env
+client_id_secret.json

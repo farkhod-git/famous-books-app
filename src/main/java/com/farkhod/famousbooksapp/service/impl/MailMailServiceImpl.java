@@ -1,6 +1,6 @@
 package com.farkhod.famousbooksapp.service.impl;
 
-import com.farkhod.famousbooksapp.service.ConfirmationService;
+import com.farkhod.famousbooksapp.service.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MailConfirmationServiceImpl implements ConfirmationService {
+public class MailMailServiceImpl implements MailService {
     private final JavaMailSender mailSender;
 
     @Async
