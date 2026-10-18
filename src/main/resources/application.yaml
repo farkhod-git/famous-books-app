@@ -15,7 +15,7 @@ spring:
   application:
     name: famous-books-app
 
-  # IDE yoki `mvn spring-boot:run` uchun .env'ni o'qiydi.
+  # IDE yoki `mvn spring-boot:run` uchun .env'ni o'qiydi!
   # Docker'da o'zgaruvchilar muhitdan keladi va ustun turadi.
   config:
     import: optional:file:.env[.properties]
