@@ -37,7 +37,7 @@ public class Post {
 
     Short year;
 
-    int readerScore;
+    short readerScore;
 
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     Attachment cover;
@@ -50,8 +50,11 @@ public class Post {
 
     boolean active;
 
-    @Column(name = "search_vector", insertable = false, updatable = false)
-    private String searchVector;
+    @Column(name = "search_vector",
+            insertable = false,
+            updatable = false,
+            columnDefinition = "tsvector")
+    String searchVector;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -60,6 +63,9 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "photo_id")
     )
     List<Attachment> photos;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    Attachment bookFile;
 
     @CreationTimestamp
     @Column(nullable = false)

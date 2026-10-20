@@ -1,4 +1,4 @@
-package com.farkhod.famousbooksapp.listeners;
+package com.farkhod.famousbooksapp.listeners.event;
 
 import com.farkhod.famousbooksapp.events.UserEmailEvent;
 import com.farkhod.famousbooksapp.service.MailService;

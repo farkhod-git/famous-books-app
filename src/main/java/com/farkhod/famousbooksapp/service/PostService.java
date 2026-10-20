@@ -27,8 +27,6 @@ public interface PostService {
 
     void incrementComments(Long postId);
 
-    void decrementComments(Long postId);
-
     ApiResponseDto<PostDto> updatePost(Long id, UpdatePostDto updatePostDto);
 
     ApiResponseDto<PostDto> updatePhotos(Long id, Set<UUID> photoIds);

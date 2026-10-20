@@ -21,8 +21,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                     from Post p
                         left join PostLike l on l.id.postId = p.id and l.id.userId = :userId
                     where p.active = true
-                    and FUNCTION('ts_match_vq', p.searchVector, cast(:query as string)) = true
-                    and (:liked = false or l.id.postId is not null)""";
+                    and (:query is null or FUNCTION('ts_match_vq', p.searchVector, cast(:query as string)) = true)
+                    and (l.id.postId is not null)""";
 
     String POST_SEARCH_BASE_QUERY = """
             select new com.farkhod.famousbooksapp.payload.posts.PostDto(
@@ -41,6 +41,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                         p.comments,
                         p.active,
                         null ,
+                        p.bookFile.id,
                         p.createdAt,
                         p.updatedAt,
                         (l.id.postId is not null),
@@ -78,28 +79,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             countQuery = POST_SEARCH_COUNT_QUERY)
     Page<PostDto> findFamousPostsByQuery(UUID userId, String query, Pageable pageable);
 
-    @Query(value = """
-            select new com.farkhod.famousbooksapp.payload.posts.PostDto(
-                        p.id,
-                        p.bookName,
-                        p.author,
-                        p.opinion,
-                        p.pages,
-                        p.genre,
-                        p.year,
-                        p.readerScore,
-                        null,
-                        p.cover.id,
-                        p.views,
-                        p.likes,
-                        p.comments,
-                        p.active,
-                        null ,
-                        p.createdAt,
-                        p.updatedAt,
-                        (l.id.postId is not null),
-                        (v.id.postId is not null)
-                       )
+    @Query(value = POST_SEARCH_BASE_QUERY +"""
             from Post p
                 left join PostLike l on l.id.postId = p.id and l.id.userId = :userId
                 left join PostView v on v.id.postId = p.id and v.id.userId = :userId
@@ -114,13 +94,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             set comments = comments + 1
             where id = :id""")
     void incrementComments(Long id);
-
-    @Modifying
-    @Query(nativeQuery = true, value = """
-            update posts
-            set comments = comments - 1
-            where id = :id""")
-    void decrementComments(Long id);
 
     boolean existsByIdAndActiveIsTrue(Long id);
 }

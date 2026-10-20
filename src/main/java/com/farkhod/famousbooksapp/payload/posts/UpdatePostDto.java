@@ -23,6 +23,7 @@ public record UpdatePostDto(@NotBlank(message = "book name cannot be blank")
                             @NotNull(message = "reader score cannot be null")
                             Integer readerScore,
                             @NotNull(message = "cover id cannot be null")
-                            UUID coverId) {
+                            UUID coverId,
+                            UUID bookFileId) {
 
 }

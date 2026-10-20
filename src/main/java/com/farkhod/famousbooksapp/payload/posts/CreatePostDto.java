@@ -25,6 +25,7 @@ public record CreatePostDto(@NotBlank(message = "book name cannot be blank")
                             Integer readerScore,
                             @NotNull(message = "cover id cannot be null")
                             UUID coverId,
-                            Set<UUID> photoIds) {
+                            Set<UUID> photoIds,
+                            UUID bookFileId) {
 
 }

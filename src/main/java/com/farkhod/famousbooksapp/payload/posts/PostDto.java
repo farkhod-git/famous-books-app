@@ -1,6 +1,5 @@
 package com.farkhod.famousbooksapp.payload.posts;
 
-import com.farkhod.famousbooksapp.entities.User;
 import com.farkhod.famousbooksapp.enums.BookGenreEnum;
 import com.farkhod.famousbooksapp.payload.attachment.AttachmentDto;
 import lombok.AllArgsConstructor;
@@ -34,6 +33,7 @@ public class PostDto {
     long comments;
     boolean active;
     List<AttachmentDto> photos;
+    UUID bookFileId;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     boolean liked;

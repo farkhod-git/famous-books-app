@@ -3,6 +3,8 @@ package com.farkhod.famousbooksapp.service.impl;
 import com.farkhod.famousbooksapp.entities.Attachment;
 import com.farkhod.famousbooksapp.entities.Post;
 import com.farkhod.famousbooksapp.entities.embedded.PostUserId;
+import com.farkhod.famousbooksapp.events.CreatePostFilesEvent;
+import com.farkhod.famousbooksapp.events.UpdatePostFilesEvent;
 import com.farkhod.famousbooksapp.exceptions.MyConflictException;
 import com.farkhod.famousbooksapp.exceptions.MyNotFoundException;
 import com.farkhod.famousbooksapp.mappers.PostMapper;
@@ -18,6 +20,8 @@ import com.farkhod.famousbooksapp.service.PostService;
 import com.farkhod.famousbooksapp.service.PostViewService;
 import com.farkhod.famousbooksapp.util.CurrentUserUtil;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -39,6 +43,7 @@ public class PostServiceImpl implements PostService {
     private final PostLikeRepository postLikeRepository;
     private final AttachmentService attachmentService;
     private final PostViewService postViewService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public ApiResponseDto<PagedModel<PostDto>> getPosts(PostSearchDto postSearchDto) {
@@ -60,27 +65,14 @@ public class PostServiceImpl implements PostService {
         };
 
         PagedModel<PostDto> data = new PagedModel<>(postPage);
-
-        System.out.println(data.getContent());
-        System.out.println(data);
-
         return ApiResponseDto.success(data);
     }
 
     @Override
     public ApiResponseDto<PostDto> createPost(CreatePostDto createPostDto) {
         Post post = postMapper.toPost(createPostDto);
-        post.setCover(attachmentService.getById(createPostDto.coverId()));
 
-        // photos
-        if (createPostDto.photoIds() != null && !createPostDto.photoIds().isEmpty()) {
-            List<Attachment> photos = attachmentService.getAllByIds(createPostDto.photoIds());
-
-            if (photos.size() != createPostDto.photoIds().size())
-                throw new MyNotFoundException("Some photos not found");
-
-            post.setPhotos(photos);
-        }
+        applicationEventPublisher.publishEvent(new CreatePostFilesEvent(post, createPostDto));
 
         postRepository.save(post);
 
@@ -105,9 +97,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public ApiResponseDto<PostDto> changeActive(Long id, boolean active) {
-        Post post = postRepository
-                .findByIdAndCreatedBy_Id(id, CurrentUserUtil.currentUser().getId())
-                .orElseThrow(() -> new MyNotFoundException("Post not found"));
+        Post post = getPostByIdAndOwner(id);
 
         if (post.isActive() == active)
             throw new MyConflictException(active ? "Post already active" : "Post already inactive");
@@ -135,34 +125,26 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void decrementComments(Long postId) {
-        postRepository.decrementComments(postId);
-    }
-
-    @Override
     public ApiResponseDto<PostDto> updatePost(Long id, UpdatePostDto updatePostDto) {
-        Post post = postRepository.findByIdAndCreatedBy_Id(id, CurrentUserUtil.currentUser().getId())
-                .orElseThrow(() -> new MyNotFoundException("Post not found"));
+        Post post = getPostByIdAndOwner(id);
 
         postMapper.update(updatePostDto, post);
 
-        if (updatePostDto.coverId() != null && !Objects.equals(post.getCover().getId(), updatePostDto.coverId())) {
-            Attachment attachment = attachmentService.getById(updatePostDto.coverId());
-            if (attachment == null) {
-                throw new MyNotFoundException("Attachment not found");
-            }
-            post.setCover(attachment);
-        }
+        applicationEventPublisher.publishEvent(new UpdatePostFilesEvent(post, updatePostDto));
 
         postRepository.save(post);
 
         return ApiResponseDto.success(postMapper.toPostDto(post));
     }
 
+    private @NonNull Post getPostByIdAndOwner(Long id) {
+        return postRepository.findByIdAndCreatedBy_Id(id, CurrentUserUtil.currentUser().getId())
+                .orElseThrow(() -> new MyNotFoundException("Post not found"));
+    }
+
     @Override
     public ApiResponseDto<PostDto> updatePhotos(Long id, Set<UUID> photoIds) {
-        Post post = postRepository.findByIdAndCreatedBy_Id(id, CurrentUserUtil.currentUser().getId())
-                .orElseThrow(() -> new MyNotFoundException("Post not found"));
+        Post post = getPostByIdAndOwner(id);
 
         List<Attachment> photos = attachmentService.getAllByIds(photoIds);
 
